@@ -148,6 +148,14 @@ export async function fetchAgeGenderBreakdown(accountId, token, dateRange) {
   return d.data || [];
 }
 
+export async function fetchDeviceBreakdown(accountId, token, dateRange) {
+  const r = await fetch(
+    `${API_BASE}/${accountId}/insights?fields=spend,impressions,clicks,actions,purchase_roas,ctr,cpm&breakdowns=device_platform&time_range=${JSON.stringify(dateRange)}&limit=10&access_token=${token}`
+  );
+  const d = await r.json();
+  return d.data || [];
+}
+
 // ─── Helpers ───
 export function extractPurchases(actions) {
   if (!actions) return 0;
