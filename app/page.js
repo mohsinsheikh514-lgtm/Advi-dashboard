@@ -91,7 +91,7 @@ function MonthlyChart({ data }) {
 }
 
 export default function Home() {
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState(process.env.NEXT_PUBLIC_TOKEN || "");
   const [connected, setConnected] = useState(false);
   const [accounts, setAccounts] = useState([]);
   const [selectedAcc, setSelectedAcc] = useState(null);
