@@ -1,10 +1,12 @@
+export const dynamic = "force-dynamic";
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const endpoint = searchParams.get("endpoint") || "orders";
   const params = searchParams.get("params") || "";
   
   const store = process.env.NEXT_PUBLIC_SHOPIFY_STORE;
-  const token = process.env.SHOPIFY_ACCESS_TOKEN;
+  const token = process.env.SHOPIFY_ACCESS_TOKEN || process.env.SHOPIFY_CLIENT_SECRET;
 
   if (!store || !token) {
     return Response.json({ error: "Shopify not configured" }, { status: 400 });
