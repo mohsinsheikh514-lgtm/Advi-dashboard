@@ -910,71 +910,157 @@ export default function Home() {
             {/* Alerts */}
             {tab === "alerts" && (
               <div className="fade-in">
-                <p style={{ color: T.textMuted, fontSize: 12, fontWeight: 600, marginBottom: 16 }}>Auto-Generated Performance Alerts</p>
+                {/* META ADS ALERTS */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, padding: "10px 16px", background: T.accentSoft, borderRadius: 8 }}>
+                  <span style={{ fontSize: 16 }}>📢</span>
+                  <p style={{ color: T.accent, fontSize: 14, fontWeight: 700, margin: 0 }}>META ADS ALERTS</p>
+                </div>
                 {(() => {
-                  const alerts = [];
-                  // Frequency alert
-                  if (freq > 3.5) alerts.push({ type: "critical", icon: "🔴", title: "Frequency Very High", msg: `Account frequency is ${freq.toFixed(2)} — audience is heavily saturated. Fresh audiences or new campaigns needed urgently.`, metric: `Freq: ${freq.toFixed(2)}` });
-                  else if (freq > 2.5) alerts.push({ type: "warning", icon: "🟡", title: "Frequency Rising", msg: `Frequency at ${freq.toFixed(2)} — approaching saturation. Consider audience expansion or creative refresh.`, metric: `Freq: ${freq.toFixed(2)}` });
+                  const metaAlerts = [];
+                  if (freq > 3.5) metaAlerts.push({ type: "critical", icon: "🔴", title: "Frequency Very High", msg: `Account frequency is ${freq.toFixed(2)} — audience is heavily saturated. Fresh audiences or new campaigns needed urgently.`, metric: `Freq: ${freq.toFixed(2)}` });
+                  else if (freq > 2.5) metaAlerts.push({ type: "warning", icon: "🟡", title: "Frequency Rising", msg: `Frequency at ${freq.toFixed(2)} — approaching saturation. Consider audience expansion or creative refresh.`, metric: `Freq: ${freq.toFixed(2)}` });
 
-                  // CTR decline
                   const ctrChange = pCtr > 0 ? ((ctr - pCtr) / pCtr * 100) : 0;
-                  if (ctrChange < -20) alerts.push({ type: "critical", icon: "🔴", title: "CTR Crashed", msg: `CTR dropped ${Math.abs(ctrChange).toFixed(0)}% vs previous period (${pCtr.toFixed(2)}% → ${ctr.toFixed(2)}%). Creative fatigue or audience saturation likely.`, metric: `CTR: ${ctr}%` });
-                  else if (ctrChange < -10) alerts.push({ type: "warning", icon: "🟡", title: "CTR Declining", msg: `CTR down ${Math.abs(ctrChange).toFixed(0)}% vs previous. Monitor closely — may need creative refresh.`, metric: `CTR: ${ctr}%` });
+                  if (ctrChange < -20) metaAlerts.push({ type: "critical", icon: "🔴", title: "CTR Crashed", msg: `CTR dropped ${Math.abs(ctrChange).toFixed(0)}% vs previous period (${pCtr.toFixed(2)}% → ${ctr.toFixed(2)}%). Creative fatigue or audience saturation likely.`, metric: `CTR: ${ctr}%` });
+                  else if (ctrChange < -10) metaAlerts.push({ type: "warning", icon: "🟡", title: "CTR Declining", msg: `CTR down ${Math.abs(ctrChange).toFixed(0)}% vs previous. Monitor closely — may need creative refresh.`, metric: `CTR: ${ctr}%` });
 
-                  // CPC spike
                   const cpcChange = pCpc > 0 ? ((cpc - pCpc) / pCpc * 100) : 0;
-                  if (cpcChange > 50) alerts.push({ type: "critical", icon: "🔴", title: "CPC Doubled", msg: `CPC increased ${cpcChange.toFixed(0)}% — from PKR ${pCpc.toFixed(0)} to PKR ${cpc.toFixed(0)}. Check targeting, creative relevance, and competition.`, metric: `CPC: PKR ${cpc.toFixed(0)}` });
-                  else if (cpcChange > 25) alerts.push({ type: "warning", icon: "🟡", title: "CPC Rising", msg: `CPC up ${cpcChange.toFixed(0)}% vs previous period. Efficiency declining.`, metric: `CPC: PKR ${cpc.toFixed(0)}` });
+                  if (cpcChange > 50) metaAlerts.push({ type: "critical", icon: "🔴", title: "CPC Doubled", msg: `CPC increased ${cpcChange.toFixed(0)}% — from PKR ${pCpc.toFixed(0)} to PKR ${cpc.toFixed(0)}. Check targeting, creative relevance, and competition.`, metric: `CPC: PKR ${cpc.toFixed(0)}` });
+                  else if (cpcChange > 25) metaAlerts.push({ type: "warning", icon: "🟡", title: "CPC Rising", msg: `CPC up ${cpcChange.toFixed(0)}% vs previous period. Efficiency declining.`, metric: `CPC: PKR ${cpc.toFixed(0)}` });
 
-                  // ROAS drop
                   const roasChange = pRoas > 0 ? ((roas - pRoas) / pRoas * 100) : 0;
-                  if (roas < 2) alerts.push({ type: "critical", icon: "🔴", title: "ROAS Below Break-even", msg: `ROAS at ${roas.toFixed(2)}x — likely losing money. Pause underperforming campaigns and reallocate budget.`, metric: `ROAS: ${roas.toFixed(2)}x` });
-                  else if (roasChange < -20) alerts.push({ type: "warning", icon: "🟡", title: "ROAS Declining", msg: `ROAS dropped ${Math.abs(roasChange).toFixed(0)}% from ${pRoas.toFixed(2)}x to ${roas.toFixed(2)}x. Investigate campaign-level performance.`, metric: `ROAS: ${roas.toFixed(2)}x` });
+                  if (roas < 2) metaAlerts.push({ type: "critical", icon: "🔴", title: "ROAS Below Break-even", msg: `ROAS at ${roas.toFixed(2)}x — likely losing money. Pause underperforming campaigns and reallocate budget.`, metric: `ROAS: ${roas.toFixed(2)}x` });
+                  else if (roasChange < -20) metaAlerts.push({ type: "warning", icon: "🟡", title: "ROAS Declining", msg: `ROAS dropped ${Math.abs(roasChange).toFixed(0)}% from ${pRoas.toFixed(2)}x to ${roas.toFixed(2)}x. Investigate campaign-level performance.`, metric: `ROAS: ${roas.toFixed(2)}x` });
 
-                  // CPM spike
                   const cpmChange = pCpm > 0 ? ((cpm - pCpm) / pCpm * 100) : 0;
-                  if (cpmChange > 40) alerts.push({ type: "warning", icon: "🟡", title: "CPM Spiked", msg: `CPM increased ${cpmChange.toFixed(0)}% — auction competition is higher or audience quality declining.`, metric: `CPM: PKR ${cpm.toFixed(0)}` });
+                  if (cpmChange > 40) metaAlerts.push({ type: "warning", icon: "🟡", title: "CPM Spiked", msg: `CPM increased ${cpmChange.toFixed(0)}% — auction competition is higher or audience quality declining.`, metric: `CPM: PKR ${cpm.toFixed(0)}` });
 
-                  // Creative fatigue from ad data
-                  const deadAds = adData.filter(a => {
-                    const aFreq = parseFloat(a.frequency || 0);
-                    const aCtr = parseFloat(a.ctr || 0);
-                    const aSpend = parseFloat(a.spend || 0);
-                    return (aFreq > 3.5 || (aCtr < 1.0 && aSpend > 1000));
-                  });
-                  if (deadAds.length > 0) alerts.push({ type: "critical", icon: "🔴", title: `${deadAds.length} Dead Creatives`, msg: `${deadAds.map(a => a.ad_name).slice(0, 3).join(", ")}${deadAds.length > 3 ? ` +${deadAds.length - 3} more` : ""} — replace these ASAP, they are wasting budget.`, metric: `${deadAds.length} ads` });
+                  const deadAds = adData.filter(a => { const af = parseFloat(a.frequency || 0); const ac = parseFloat(a.ctr || 0); const as2 = parseFloat(a.spend || 0); return (af > 3.5 || (ac < 1.0 && as2 > 1000)); });
+                  if (deadAds.length > 0) metaAlerts.push({ type: "critical", icon: "🔴", title: `${deadAds.length} Dead Creatives`, msg: `${deadAds.map(a => a.ad_name).slice(0, 3).join(", ")}${deadAds.length > 3 ? ` +${deadAds.length - 3} more` : ""} — replace these ASAP, budget waste ho raha hai.`, metric: `${deadAds.length} ads` });
 
-                  const fatiguingAds = adData.filter(a => {
-                    const aFreq = parseFloat(a.frequency || 0);
-                    const aCtr = parseFloat(a.ctr || 0);
-                    const aRoas = extractROAS(a.purchase_roas);
-                    const aSpend = parseFloat(a.spend || 0);
-                    return aSpend > 500 && (aFreq > 2.5 || aCtr < 1.5 || aRoas < 3) && !(aFreq > 3.5 || (aCtr < 1.0 && aSpend > 1000));
-                  });
-                  if (fatiguingAds.length > 0) alerts.push({ type: "warning", icon: "🟡", title: `${fatiguingAds.length} Creatives Fatiguing`, msg: `${fatiguingAds.map(a => a.ad_name).slice(0, 3).join(", ")} — starting to decline. Prepare replacements.`, metric: `${fatiguingAds.length} ads` });
+                  const fatiguingAds = adData.filter(a => { const af = parseFloat(a.frequency || 0); const ac = parseFloat(a.ctr || 0); const ar = extractROAS(a.purchase_roas); const as2 = parseFloat(a.spend || 0); return as2 > 500 && (af > 2.5 || ac < 1.5 || ar < 3) && !(af > 3.5 || (ac < 1.0 && as2 > 1000)); });
+                  if (fatiguingAds.length > 0) metaAlerts.push({ type: "warning", icon: "🟡", title: `${fatiguingAds.length} Creatives Fatiguing`, msg: `${fatiguingAds.map(a => a.ad_name).slice(0, 3).join(", ")} — starting to decline. Prepare replacements.`, metric: `${fatiguingAds.length} ads` });
 
-                  // Positive alerts
-                  if (roas >= 5) alerts.push({ type: "positive", icon: "🟢", title: "Strong ROAS", msg: `ROAS at ${roas.toFixed(2)}x — excellent performance. Consider scaling budget if frequency allows.`, metric: `ROAS: ${roas.toFixed(2)}x` });
+                  const metaPurchases = purchases;
+                  const linkClicks = funnelData?.link_clicks || 0;
+                  const adConvRate = linkClicks > 0 ? (metaPurchases / linkClicks * 100) : 0;
+                  if (adConvRate < 0.5 && linkClicks > 100) metaAlerts.push({ type: "critical", icon: "🔴", title: "Ad Conversion Rate Very Low", msg: `Only ${adConvRate.toFixed(2)}% of ad clicks converting to purchase. Landing page or product page needs urgent optimization.`, metric: `Conv: ${adConvRate.toFixed(2)}%` });
+                  else if (adConvRate < 1 && linkClicks > 100) metaAlerts.push({ type: "warning", icon: "🟡", title: "Ad Conversion Rate Low", msg: `${adConvRate.toFixed(2)}% conversion rate from ad clicks. Check landing page experience and product page.`, metric: `Conv: ${adConvRate.toFixed(2)}%` });
 
+                  if (roas >= 5) metaAlerts.push({ type: "positive", icon: "🟢", title: "Strong ROAS", msg: `ROAS at ${roas.toFixed(2)}x — excellent performance. Consider scaling budget if frequency allows.`, metric: `ROAS: ${roas.toFixed(2)}x` });
                   const scaleAds = adData.filter(a => extractROAS(a.purchase_roas) >= 5 && parseFloat(a.spend || 0) > 500);
-                  if (scaleAds.length > 0) alerts.push({ type: "positive", icon: "🟢", title: `${scaleAds.length} Ads Ready to Scale`, msg: `${scaleAds.map(a => a.ad_name).slice(0, 3).join(", ")} — high ROAS with decent spend. Increase budget on these.`, metric: `${scaleAds.length} ads` });
+                  if (scaleAds.length > 0) metaAlerts.push({ type: "positive", icon: "🟢", title: `${scaleAds.length} Ads Ready to Scale`, msg: `${scaleAds.map(a => a.ad_name).slice(0, 3).join(", ")} — high ROAS with decent spend. Increase budget.`, metric: `${scaleAds.length} ads` });
 
-                  if (alerts.length === 0) alerts.push({ type: "positive", icon: "✅", title: "All Clear", msg: "No major issues detected. Account performing within normal parameters.", metric: "" });
+                  if (metaAlerts.length === 0) metaAlerts.push({ type: "positive", icon: "✅", title: "Meta Ads All Clear", msg: "No major issues detected in Meta Ads.", metric: "" });
 
-                  return alerts.map((a, i) => (
-                    <div key={i} style={{
-                      background: T.card, borderRadius: 12, border: `1px solid ${T.border}`, padding: "16px 20px", marginBottom: 10,
-                      borderLeft: `4px solid ${a.type === "critical" ? T.red : a.type === "warning" ? T.amber : T.green}`
-                    }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                        <p style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>{a.icon} {a.title}</p>
-                        {a.metric && <span style={{ padding: "3px 10px", borderRadius: 6, fontSize: 10, fontWeight: 600, background: a.type === "critical" ? T.redSoft : a.type === "warning" ? T.amberSoft : T.greenSoft, color: a.type === "critical" ? T.red : a.type === "warning" ? T.amber : T.green }}>{a.metric}</span>}
+                  return metaAlerts.map((a, i) => (
+                    <div key={`m${i}`} style={{ background: T.card, borderRadius: 12, border: `1px solid ${T.border}`, padding: "14px 18px", marginBottom: 8, borderLeft: `4px solid ${a.type === "critical" ? T.red : a.type === "warning" ? T.amber : a.type === "info" ? T.purple : T.green}` }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                        <p style={{ fontSize: 13, fontWeight: 600, margin: 0 }}>{a.icon} {a.title}</p>
+                        {a.metric && <span style={{ padding: "3px 10px", borderRadius: 6, fontSize: 10, fontWeight: 600, background: a.type === "critical" ? T.redSoft : a.type === "warning" ? T.amberSoft : a.type === "info" ? T.purpleSoft : T.greenSoft, color: a.type === "critical" ? T.red : a.type === "warning" ? T.amber : a.type === "info" ? T.purple : T.green }}>{a.metric}</span>}
                       </div>
-                      <p style={{ color: T.textMuted, fontSize: 12, margin: 0, lineHeight: 1.5 }}>{a.msg}</p>
+                      <p style={{ color: T.textMuted, fontSize: 11, margin: 0, lineHeight: 1.5 }}>{a.msg}</p>
                     </div>
                   ));
                 })()}
+
+                {/* SHOPIFY ALERTS */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "24px 0 12px", padding: "10px 16px", background: "rgba(150,191,72,0.12)", borderRadius: 8 }}>
+                  <span style={{ fontSize: 16 }}>🛍</span>
+                  <p style={{ color: "#96BF48", fontSize: 14, fontWeight: 700, margin: 0 }}>SHOPIFY ALERTS</p>
+                  {!shopifyData && <span style={{ color: T.textDim, fontSize: 11 }}>(Load Shopify data from Shopify tab first)</span>}
+                </div>
+                {shopifyData && !shopifyData.error ? (() => {
+                  const shopAlerts = [];
+                  const sRev = shopifyData.totalRevenue || 0;
+                  const sOrders = shopifyData.totalOrders || 0;
+                  const sAov = shopifyData.aov || 0;
+                  const sTrueRoas = shopifyData.trueRoas || 0;
+                  const sFulfilled = shopifyData.fulfilled || 0;
+                  const sCancelled = shopifyData.cancelled || 0;
+                  const sRefunded = shopifyData.refunded || 0;
+                  const cancelRate = sOrders > 0 ? (sCancelled / sOrders * 100) : 0;
+                  const refundRate = sOrders > 0 ? (sRefunded / sOrders * 100) : 0;
+                  const fulfillRate = sOrders > 0 ? (sFulfilled / sOrders * 100) : 0;
+                  const unfulfilled = sOrders - sFulfilled - sCancelled;
+                  const unfulfilledRate = sOrders > 0 ? (unfulfilled / sOrders * 100) : 0;
+                  const metaReportedRoas = roas;
+                  const roasGap = metaReportedRoas > 0 ? metaReportedRoas / Math.max(sTrueRoas, 0.01) : 0;
+                  const costPerShopifyOrder = spend > 0 && sOrders > 0 ? spend / sOrders : 0;
+                  const metaVsShopifyOrders = purchases > 0 && sOrders > 0 ? Math.abs(purchases - sOrders) / purchases * 100 : 0;
+
+                  // True ROAS
+                  if (sTrueRoas < 1) shopAlerts.push({ type: "critical", icon: "🔴", title: "True ROAS Below 1x — Losing Money", msg: `Shopify actual revenue ÷ Meta spend = ${sTrueRoas.toFixed(2)}x. You are spending more on ads than you are making. Urgent action needed — pause low performers.`, metric: `True ROAS: ${sTrueRoas.toFixed(2)}x` });
+                  else if (sTrueRoas < 1.5) shopAlerts.push({ type: "critical", icon: "🔴", title: "True ROAS Dangerously Low", msg: `True ROAS at ${sTrueRoas.toFixed(2)}x — barely covering ad spend, not accounting for COGS, shipping, returns. Likely net negative.`, metric: `True ROAS: ${sTrueRoas.toFixed(2)}x` });
+                  else if (sTrueRoas < 2.5) shopAlerts.push({ type: "warning", icon: "🟡", title: "True ROAS Needs Improvement", msg: `True ROAS at ${sTrueRoas.toFixed(2)}x — profitable but thin margins after COGS and shipping. Optimize for better efficiency.`, metric: `True ROAS: ${sTrueRoas.toFixed(2)}x` });
+                  else if (sTrueRoas >= 3) shopAlerts.push({ type: "positive", icon: "🟢", title: "True ROAS Strong — Scale Opportunity", msg: `True ROAS at ${sTrueRoas.toFixed(2)}x — healthy margins. Consider increasing ad budget to scale revenue.`, metric: `True ROAS: ${sTrueRoas.toFixed(2)}x` });
+
+                  // Meta vs True ROAS gap
+                  if (roasGap > 3) shopAlerts.push({ type: "info", icon: "🟣", title: "Meta Over-Reporting by 3x+", msg: `Meta says ${metaReportedRoas.toFixed(2)}x ROAS but Shopify actual is ${sTrueRoas.toFixed(2)}x — ${roasGap.toFixed(1)}x gap. Meta is heavily over-attributing. Don't trust Meta numbers for budget decisions.`, metric: `Gap: ${roasGap.toFixed(1)}x` });
+                  else if (roasGap > 2) shopAlerts.push({ type: "info", icon: "🟣", title: "Meta Over-Reporting by 2x+", msg: `Meta reports ${metaReportedRoas.toFixed(2)}x but actual Shopify ROAS is ${sTrueRoas.toFixed(2)}x. Significant attribution gap — use Shopify numbers for real decisions.`, metric: `Gap: ${roasGap.toFixed(1)}x` });
+
+                  // Cancellation alerts (10% threshold as requested)
+                  if (cancelRate > 10) shopAlerts.push({ type: "critical", icon: "🔴", title: "Cancellation Rate CRITICAL", msg: `${cancelRate.toFixed(1)}% orders cancelled (${sCancelled} of ${sOrders}). Above 10% threshold — investigate product quality, delivery expectations, or wrong audience targeting.`, metric: `Cancel: ${cancelRate.toFixed(1)}%` });
+                  else if (cancelRate > 5) shopAlerts.push({ type: "warning", icon: "🟡", title: "Cancellation Rate High", msg: `${cancelRate.toFixed(1)}% cancellation rate. Rising cancellations indicate audience-product mismatch or post-purchase buyer remorse.`, metric: `Cancel: ${cancelRate.toFixed(1)}%` });
+
+                  // Returns/Refund alerts (15% threshold as requested)
+                  if (refundRate > 15) shopAlerts.push({ type: "critical", icon: "🔴", title: "Returns/Refunds CRITICAL", msg: `${refundRate.toFixed(1)}% refund rate (${sRefunded} of ${sOrders}). Above 15% threshold — serious product quality or expectation mismatch. Check product descriptions, images vs reality, and sizing.`, metric: `Refunds: ${refundRate.toFixed(1)}%` });
+                  else if (refundRate > 5) shopAlerts.push({ type: "warning", icon: "🟡", title: "Refund Rate Elevated", msg: `${refundRate.toFixed(1)}% refund rate. Monitor product reviews and common refund reasons.`, metric: `Refunds: ${refundRate.toFixed(1)}%` });
+                  else if (refundRate === 0 && sOrders > 20) shopAlerts.push({ type: "positive", icon: "🟢", title: "Zero Refunds", msg: `No refunds in this period — product quality and customer satisfaction is excellent.`, metric: "0 refunds" });
+
+                  // Fulfillment
+                  if (fulfillRate < 80 && sOrders > 10) shopAlerts.push({ type: "critical", icon: "🔴", title: "Fulfillment Rate Critical", msg: `Only ${fulfillRate.toFixed(0)}% orders fulfilled. ${unfulfilled} orders pending — customers waiting. Speed up fulfillment or risk cancellations and bad reviews.`, metric: `Fulfilled: ${fulfillRate.toFixed(0)}%` });
+                  else if (fulfillRate < 90 && sOrders > 10) shopAlerts.push({ type: "warning", icon: "🟡", title: "Fulfillment Needs Attention", msg: `${fulfillRate.toFixed(0)}% fulfillment rate. ${unfulfilled} orders still pending.`, metric: `Fulfilled: ${fulfillRate.toFixed(0)}%` });
+                  else if (fulfillRate >= 95 && sOrders > 10) shopAlerts.push({ type: "positive", icon: "🟢", title: "Fulfillment Excellent", msg: `${fulfillRate.toFixed(0)}% fulfillment rate — operations running smoothly.`, metric: `Fulfilled: ${fulfillRate.toFixed(0)}%` });
+
+                  // AOV
+                  if (sAov < 2000 && sOrders > 10) shopAlerts.push({ type: "warning", icon: "🟡", title: "AOV Low", msg: `Average order value PKR ${sAov.toFixed(0)}. Consider upselling, bundling, or minimum order incentives to increase AOV.`, metric: `AOV: PKR ${sAov.toFixed(0)}` });
+                  else if (sAov > 8000) shopAlerts.push({ type: "positive", icon: "🟢", title: "AOV Strong", msg: `AOV at PKR ${sAov.toFixed(0)} — customers buying premium. Upsell strategy working.`, metric: `AOV: PKR ${sAov.toFixed(0)}` });
+
+                  // Product dependency
+                  if (shopifyData.topProducts && shopifyData.topProducts.length > 0) {
+                    const topRev = shopifyData.topProducts[0]?.revenue || 0;
+                    const topPct = sRev > 0 ? (topRev / sRev * 100) : 0;
+                    if (topPct > 50) shopAlerts.push({ type: "warning", icon: "🟡", title: "Single Product Dependency", msg: `"${shopifyData.topProducts[0]?.title}" accounts for ${topPct.toFixed(0)}% of total revenue. High risk — if this product slows down, entire revenue drops. Diversify product mix.`, metric: `${topPct.toFixed(0)}% revenue` });
+                    const top3Rev = shopifyData.topProducts.slice(0, 3).reduce((s, p) => s + (p.revenue || 0), 0);
+                    const top3Pct = sRev > 0 ? (top3Rev / sRev * 100) : 0;
+                    if (top3Pct > 80 && topPct <= 50) shopAlerts.push({ type: "warning", icon: "🟡", title: "Top 3 Products = 80%+ Revenue", msg: `Top 3 products carry ${top3Pct.toFixed(0)}% of revenue. Product catalog needs diversification for stability.`, metric: `Top 3: ${top3Pct.toFixed(0)}%` });
+                  }
+
+                  // Cost per Shopify order
+                  if (costPerShopifyOrder > sAov * 0.5 && sOrders > 10) shopAlerts.push({ type: "critical", icon: "🔴", title: "Ad Cost Per Order Too High", msg: `Spending PKR ${costPerShopifyOrder.toFixed(0)} per Shopify order vs AOV of PKR ${sAov.toFixed(0)}. Ad cost is ${(costPerShopifyOrder / sAov * 100).toFixed(0)}% of order value — not sustainable after COGS.`, metric: `CPA: PKR ${costPerShopifyOrder.toFixed(0)}` });
+                  else if (costPerShopifyOrder > sAov * 0.3 && sOrders > 10) shopAlerts.push({ type: "warning", icon: "🟡", title: "Ad Cost Per Order High", msg: `PKR ${costPerShopifyOrder.toFixed(0)} per Shopify order (${(costPerShopifyOrder / sAov * 100).toFixed(0)}% of AOV). Optimize campaigns to reduce acquisition cost.`, metric: `CPA: PKR ${costPerShopifyOrder.toFixed(0)}` });
+
+                  // Meta vs Shopify order mismatch
+                  if (metaVsShopifyOrders > 30 && purchases > 10 && sOrders > 10) shopAlerts.push({ type: "info", icon: "🟣", title: "Order Count Mismatch — Tracking Issue", msg: `Meta reports ${purchases} purchases but Shopify shows ${sOrders} orders — ${metaVsShopifyOrders.toFixed(0)}% difference. Check pixel firing, duplicate events, or attribution window settings.`, metric: `Gap: ${Math.abs(purchases - sOrders)} orders` });
+
+                  // Revenue
+                  if (sRev < spend) shopAlerts.push({ type: "critical", icon: "🔴", title: "Revenue Below Ad Spend", msg: `Shopify revenue PKR ${fmt(sRev)} is less than Meta ad spend PKR ${fmt(spend)}. You are losing money on every rupee spent on ads.`, metric: `Loss: PKR ${fmt(spend - sRev)}` });
+
+                  // Daily patterns
+                  if (shopifyData.dailySales && shopifyData.dailySales.length > 3) {
+                    const last3 = shopifyData.dailySales.slice(-3);
+                    const avgRev = shopifyData.dailySales.reduce((s, d) => s + d.revenue, 0) / shopifyData.dailySales.length;
+                    const last3Avg = last3.reduce((s, d) => s + d.revenue, 0) / 3;
+                    if (last3Avg < avgRev * 0.5 && avgRev > 0) shopAlerts.push({ type: "critical", icon: "🔴", title: "Revenue Dropping — Last 3 Days", msg: `Last 3 days average PKR ${fmt(last3Avg)}/day vs period average PKR ${fmt(avgRev)}/day. ${((1 - last3Avg / avgRev) * 100).toFixed(0)}% drop — something changed recently.`, metric: `↓${((1 - last3Avg / avgRev) * 100).toFixed(0)}%` });
+                    const zeroDays = shopifyData.dailySales.filter(d => d.orders === 0).length;
+                    if (zeroDays > 0) shopAlerts.push({ type: "warning", icon: "🟡", title: `${zeroDays} Zero-Order Days`, msg: `${zeroDays} days with zero orders in this period. Check if ads were running and store was accessible on those days.`, metric: `${zeroDays} days` });
+                  }
+
+                  if (shopAlerts.length === 0) shopAlerts.push({ type: "positive", icon: "✅", title: "Shopify All Clear", msg: "No major issues detected in Shopify data.", metric: "" });
+
+                  return shopAlerts.map((a, i) => (
+                    <div key={`s${i}`} style={{ background: T.card, borderRadius: 12, border: `1px solid ${T.border}`, padding: "14px 18px", marginBottom: 8, borderLeft: `4px solid ${a.type === "critical" ? T.red : a.type === "warning" ? T.amber : a.type === "info" ? T.purple : T.green}` }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                        <p style={{ fontSize: 13, fontWeight: 600, margin: 0 }}>{a.icon} {a.title}</p>
+                        {a.metric && <span style={{ padding: "3px 10px", borderRadius: 6, fontSize: 10, fontWeight: 600, background: a.type === "critical" ? T.redSoft : a.type === "warning" ? T.amberSoft : a.type === "info" ? T.purpleSoft : T.greenSoft, color: a.type === "critical" ? T.red : a.type === "warning" ? T.amber : a.type === "info" ? T.purple : T.green }}>{a.metric}</span>}
+                      </div>
+                      <p style={{ color: T.textMuted, fontSize: 11, margin: 0, lineHeight: 1.5 }}>{a.msg}</p>
+                    </div>
+                  ));
+                })() : (
+                  <p style={{ color: T.textDim, fontSize: 12, textAlign: "center", padding: 20 }}>Shopify tab se pehle data load karo — phir alerts yahan dikhein gi</p>
+                )}
               </div>
             )}
 
