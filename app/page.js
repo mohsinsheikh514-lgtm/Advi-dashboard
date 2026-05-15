@@ -1001,30 +1001,36 @@ export default function Home() {
 
                   // Cancellation alerts (10% threshold as requested)
                   if (cancelRate > 10) shopAlerts.push({ type: "critical", icon: "🔴", title: "Cancellation Rate CRITICAL", msg: `${cancelRate.toFixed(1)}% orders cancelled (${sCancelled} of ${sOrders}). Above 10% threshold — investigate product quality, delivery expectations, or wrong audience targeting.`, metric: `Cancel: ${cancelRate.toFixed(1)}%` });
-                  else if (cancelRate > 5) shopAlerts.push({ type: "warning", icon: "🟡", title: "Cancellation Rate High", msg: `${cancelRate.toFixed(1)}% cancellation rate. Rising cancellations indicate audience-product mismatch or post-purchase buyer remorse.`, metric: `Cancel: ${cancelRate.toFixed(1)}%` });
+                  else if (cancelRate > 5) shopAlerts.push({ type: "warning", icon: "🟡", title: "Cancellation Rate High", msg: `${cancelRate.toFixed(1)}% cancellation rate (${sCancelled} of ${sOrders}). Rising cancellations indicate audience-product mismatch or post-purchase buyer remorse.`, metric: `Cancel: ${cancelRate.toFixed(1)}%` });
+                  else if (cancelRate > 0) shopAlerts.push({ type: "positive", icon: "🟢", title: "Cancellations Under Control", msg: `${cancelRate.toFixed(1)}% cancellation rate (${sCancelled} of ${sOrders}) — within acceptable range. Keep monitoring.`, metric: `Cancel: ${cancelRate.toFixed(1)}%` });
+                  else shopAlerts.push({ type: "positive", icon: "🟢", title: "Zero Cancellations", msg: `No cancellations this period — excellent order quality.`, metric: "0 cancelled" });
 
                   // Returns/Refund alerts (15% threshold as requested)
                   if (refundRate > 15) shopAlerts.push({ type: "critical", icon: "🔴", title: "Returns/Refunds CRITICAL", msg: `${refundRate.toFixed(1)}% refund rate (${sRefunded} of ${sOrders}). Above 15% threshold — serious product quality or expectation mismatch. Check product descriptions, images vs reality, and sizing.`, metric: `Refunds: ${refundRate.toFixed(1)}%` });
-                  else if (refundRate > 5) shopAlerts.push({ type: "warning", icon: "🟡", title: "Refund Rate Elevated", msg: `${refundRate.toFixed(1)}% refund rate. Monitor product reviews and common refund reasons.`, metric: `Refunds: ${refundRate.toFixed(1)}%` });
-                  else if (refundRate === 0 && sOrders > 20) shopAlerts.push({ type: "positive", icon: "🟢", title: "Zero Refunds", msg: `No refunds in this period — product quality and customer satisfaction is excellent.`, metric: "0 refunds" });
+                  else if (refundRate > 5) shopAlerts.push({ type: "warning", icon: "🟡", title: "Refund Rate Elevated", msg: `${refundRate.toFixed(1)}% refund rate (${sRefunded} of ${sOrders}). Monitor product reviews and common refund reasons.`, metric: `Refunds: ${refundRate.toFixed(1)}%` });
+                  else if (refundRate > 0) shopAlerts.push({ type: "positive", icon: "🟢", title: "Refunds Low", msg: `${refundRate.toFixed(1)}% refund rate (${sRefunded} of ${sOrders}) — within healthy range.`, metric: `Refunds: ${refundRate.toFixed(1)}%` });
+                  else shopAlerts.push({ type: "positive", icon: "🟢", title: "Zero Refunds", msg: `No refunds in this period — product quality and customer satisfaction is excellent.`, metric: "0 refunds" });
 
                   // Fulfillment
                   if (fulfillRate < 80 && sOrders > 10) shopAlerts.push({ type: "critical", icon: "🔴", title: "Fulfillment Rate Critical", msg: `Only ${fulfillRate.toFixed(0)}% orders fulfilled. ${unfulfilled} orders pending — customers waiting. Speed up fulfillment or risk cancellations and bad reviews.`, metric: `Fulfilled: ${fulfillRate.toFixed(0)}%` });
                   else if (fulfillRate < 90 && sOrders > 10) shopAlerts.push({ type: "warning", icon: "🟡", title: "Fulfillment Needs Attention", msg: `${fulfillRate.toFixed(0)}% fulfillment rate. ${unfulfilled} orders still pending.`, metric: `Fulfilled: ${fulfillRate.toFixed(0)}%` });
                   else if (fulfillRate >= 95 && sOrders > 10) shopAlerts.push({ type: "positive", icon: "🟢", title: "Fulfillment Excellent", msg: `${fulfillRate.toFixed(0)}% fulfillment rate — operations running smoothly.`, metric: `Fulfilled: ${fulfillRate.toFixed(0)}%` });
+                  else if (sOrders > 10) shopAlerts.push({ type: "positive", icon: "🟢", title: "Fulfillment Good", msg: `${fulfillRate.toFixed(0)}% fulfillment rate. ${unfulfilled > 0 ? unfulfilled + " orders pending." : "All orders processed."}`, metric: `Fulfilled: ${fulfillRate.toFixed(0)}%` });
 
                   // AOV
                   if (sAov < 2000 && sOrders > 10) shopAlerts.push({ type: "warning", icon: "🟡", title: "AOV Low", msg: `Average order value PKR ${sAov.toFixed(0)}. Consider upselling, bundling, or minimum order incentives to increase AOV.`, metric: `AOV: PKR ${sAov.toFixed(0)}` });
                   else if (sAov > 8000) shopAlerts.push({ type: "positive", icon: "🟢", title: "AOV Strong", msg: `AOV at PKR ${sAov.toFixed(0)} — customers buying premium. Upsell strategy working.`, metric: `AOV: PKR ${sAov.toFixed(0)}` });
+                  else shopAlerts.push({ type: "positive", icon: "🟢", title: "AOV Healthy", msg: `AOV at PKR ${sAov.toFixed(0)} — within normal range for this category.`, metric: `AOV: PKR ${sAov.toFixed(0)}` });
 
                   // Product dependency
                   if (shopifyData.topProducts && shopifyData.topProducts.length > 0) {
                     const topRev = shopifyData.topProducts[0]?.revenue || 0;
                     const topPct = sRev > 0 ? (topRev / sRev * 100) : 0;
                     if (topPct > 50) shopAlerts.push({ type: "warning", icon: "🟡", title: "Single Product Dependency", msg: `"${shopifyData.topProducts[0]?.title}" accounts for ${topPct.toFixed(0)}% of total revenue. High risk — if this product slows down, entire revenue drops. Diversify product mix.`, metric: `${topPct.toFixed(0)}% revenue` });
+                    else shopAlerts.push({ type: "positive", icon: "🟢", title: "Product Mix Healthy", msg: `Top product "${shopifyData.topProducts[0]?.title}" is ${topPct.toFixed(0)}% of revenue — no single product dependency.`, metric: `Top: ${topPct.toFixed(0)}%` });
                     const top3Rev = shopifyData.topProducts.slice(0, 3).reduce((s, p) => s + (p.revenue || 0), 0);
                     const top3Pct = sRev > 0 ? (top3Rev / sRev * 100) : 0;
-                    if (top3Pct > 80 && topPct <= 50) shopAlerts.push({ type: "warning", icon: "🟡", title: "Top 3 Products = 80%+ Revenue", msg: `Top 3 products carry ${top3Pct.toFixed(0)}% of revenue. Product catalog needs diversification for stability.`, metric: `Top 3: ${top3Pct.toFixed(0)}%` });
+                    if (top3Pct > 80) shopAlerts.push({ type: "warning", icon: "🟡", title: "Top 3 Products = " + top3Pct.toFixed(0) + "% Revenue", msg: `Top 3 products carry ${top3Pct.toFixed(0)}% of revenue. Product catalog needs diversification for stability.`, metric: `Top 3: ${top3Pct.toFixed(0)}%` });
                   }
 
                   // Cost per Shopify order
@@ -1042,7 +1048,10 @@ export default function Home() {
                     const last3 = shopifyData.dailySales.slice(-3);
                     const avgRev = shopifyData.dailySales.reduce((s, d) => s + d.revenue, 0) / shopifyData.dailySales.length;
                     const last3Avg = last3.reduce((s, d) => s + d.revenue, 0) / 3;
+                    const dailyChange = avgRev > 0 ? ((last3Avg - avgRev) / avgRev * 100) : 0;
                     if (last3Avg < avgRev * 0.5 && avgRev > 0) shopAlerts.push({ type: "critical", icon: "🔴", title: "Revenue Dropping — Last 3 Days", msg: `Last 3 days average PKR ${fmt(last3Avg)}/day vs period average PKR ${fmt(avgRev)}/day. ${((1 - last3Avg / avgRev) * 100).toFixed(0)}% drop — something changed recently.`, metric: `↓${((1 - last3Avg / avgRev) * 100).toFixed(0)}%` });
+                    else if (last3Avg < avgRev * 0.75 && avgRev > 0) shopAlerts.push({ type: "warning", icon: "🟡", title: "Revenue Dipping — Last 3 Days", msg: `Last 3 days average PKR ${fmt(last3Avg)}/day vs period average PKR ${fmt(avgRev)}/day. ${Math.abs(dailyChange).toFixed(0)}% below average.`, metric: `↓${Math.abs(dailyChange).toFixed(0)}%` });
+                    else if (avgRev > 0) shopAlerts.push({ type: "positive", icon: "🟢", title: "Revenue Trend Stable", msg: `Last 3 days average PKR ${fmt(last3Avg)}/day vs period average PKR ${fmt(avgRev)}/day — ${dailyChange >= 0 ? "+" : ""}${dailyChange.toFixed(0)}% trend.`, metric: `${dailyChange >= 0 ? "↑" : "↓"}${Math.abs(dailyChange).toFixed(0)}%` });
                     const zeroDays = shopifyData.dailySales.filter(d => d.orders === 0).length;
                     if (zeroDays > 0) shopAlerts.push({ type: "warning", icon: "🟡", title: `${zeroDays} Zero-Order Days`, msg: `${zeroDays} days with zero orders in this period. Check if ads were running and store was accessible on those days.`, metric: `${zeroDays} days` });
                   }
