@@ -411,6 +411,7 @@ export default function Home() {
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
   const [expandedCampaigns, setExpandedCampaigns] = useState({});
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const dateRange = getDateRange(datePreset, customFrom, customTo);
   const prevRange = getPreviousPeriod(dateRange);
@@ -587,8 +588,18 @@ export default function Home() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: T.bg, fontFamily: "'DM Sans', -apple-system, sans-serif", color: T.text }}>
+      {/* Mobile hamburger */}
+      <button onClick={() => setSidebarOpen(!sidebarOpen)}
+        style={{ display: "none", position: "fixed", top: 12, left: 12, zIndex: 200, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: "8px 12px", color: T.text, fontSize: 18, cursor: "pointer" }}
+        className="mobile-menu-btn">
+        {sidebarOpen ? "✕" : "☰"}
+      </button>
+
+      {/* Sidebar overlay for mobile */}
+      {sidebarOpen && <div onClick={() => setSidebarOpen(false)} className="sidebar-overlay" style={{ display: "none", position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 99 }} />}
+
       {/* Sidebar */}
-      <div style={{ width: 260, borderRight: `1px solid ${T.border}`, padding: "20px 12px", overflowY: "auto", flexShrink: 0 }}>
+      <div className="sidebar" style={{ width: 260, borderRight: `1px solid ${T.border}`, padding: "20px 12px", overflowY: "auto", flexShrink: 0, background: T.bg, zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 8px", marginBottom: 20 }}>
           <span style={{ fontSize: 22 }}>📊</span>
           <div>
@@ -600,7 +611,7 @@ export default function Home() {
           style={{ width: "100%", padding: "10px 12px", background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, color: T.text, fontSize: 12, outline: "none", boxSizing: "border-box", marginBottom: 12 }} />
         <p style={{ color: T.textDim, fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, padding: "0 8px", marginBottom: 8 }}>Accounts ({filteredAccounts.length})</p>
         {filteredAccounts.map(acc => (
-          <div key={acc.id} onClick={() => loadAccount(acc)}
+          <div key={acc.id} onClick={() => { loadAccount(acc); setSidebarOpen(false); }}
             style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", background: selectedAcc?.id === acc.id ? T.accentSoft : "transparent", borderRadius: 8, cursor: "pointer", borderLeft: selectedAcc?.id === acc.id ? `3px solid ${T.accent}` : "3px solid transparent", marginBottom: 2 }}>
             <p style={{ color: T.text, fontSize: 12, fontWeight: selectedAcc?.id === acc.id ? 600 : 400, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{acc.name?.replace("act_", "")}</p>
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: acc.account_status === 1 ? T.green : T.red, flexShrink: 0 }} />
@@ -611,7 +622,29 @@ export default function Home() {
       </div>
 
       {/* Main */}
-      <div style={{ flex: 1, padding: "20px 28px", overflowY: "auto" }}>
+      <div className="main-content" style={{ flex: 1, padding: "20px 28px", overflowY: "auto" }}>
+        <style>{`
+          @media (max-width: 768px) {
+            .mobile-menu-btn { display: block !important; }
+            .sidebar-overlay { display: block !important; }
+            .sidebar { position: fixed !important; left: ${sidebarOpen ? '0' : '-280px'} !important; top: 0 !important; bottom: 0 !important; transition: left 0.3s ease !important; box-shadow: ${sidebarOpen ? '4px 0 20px rgba(0,0,0,0.3)' : 'none'} !important; }
+            .main-content { padding: 16px 12px !important; padding-top: 56px !important; }
+            .kpi-grid-5 { grid-template-columns: repeat(2, 1fr) !important; }
+            .kpi-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+            .funnel-daily-grid { grid-template-columns: 1fr !important; }
+            .campaign-metrics { grid-template-columns: repeat(4, 1fr) !important; font-size: 10px !important; }
+            .header-row { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+            .tabs-row { overflow-x: auto !important; width: 100% !important; }
+            .monthly-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .device-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .ad-row-metrics { flex-wrap: wrap !important; gap: 8px !important; }
+          }
+          @media (max-width: 480px) {
+            .kpi-grid-5 { grid-template-columns: 1fr 1fr !important; }
+            .campaign-metrics { grid-template-columns: repeat(3, 1fr) !important; }
+            .monthly-grid { grid-template-columns: 1fr 1fr !important; }
+          }
+        `}</style>
         {loading && (
           <div style={{ textAlign: "center", padding: "80px 0" }}>
             <div style={{ width: 36, height: 36, border: `3px solid ${T.border}`, borderTopColor: T.accent, borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
@@ -630,7 +663,7 @@ export default function Home() {
           <>
             {/* Header */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <div className="header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <div>
                     <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>{selectedAcc.name}</h1>
@@ -642,7 +675,7 @@ export default function Home() {
                   customFrom={customFrom} customTo={customTo}
                   onCustomChange={(t, v) => t === "from" ? setCustomFrom(v) : setCustomTo(v)} />
               </div>
-              <div style={{ display: "flex", gap: 3, background: T.card, borderRadius: 8, padding: 3, overflowX: "auto", width: "100%" }}>
+              <div className="tabs-row" style={{ display: "flex", gap: 3, background: T.card, borderRadius: 8, padding: 3, overflowX: "auto", width: "100%" }}>
                 {tabs.map(t => (
                   <button key={t.id} onClick={() => setTab(t.id)}
                     style={{ padding: "7px 14px", borderRadius: 6, border: "none", background: tab === t.id ? T.accent : "transparent", color: tab === t.id ? "#fff" : T.textMuted, fontSize: 11, fontWeight: 500, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>{t.label}</button>
@@ -653,21 +686,21 @@ export default function Home() {
             {/* Overview */}
             {tab === "overview" && (
               <div className="fade-in">
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10, marginBottom: 16 }}>
+                <div className="kpi-grid-5" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10, marginBottom: 16 }}>
                   <MetricCard label="Spend" value={spend} prev={pSpend} prefix="PKR " />
                   <MetricCard label="Revenue" value={revenue} prev={pRevenue} prefix="PKR " color={T.green} />
                   <MetricCard label="ROAS" value={roas} prev={pRoas} color={roas >= 4 ? T.green : roas >= 3 ? T.amber : T.red} />
                   <MetricCard label="Purchases" value={purchases} prev={pPurchases} color={T.accent} />
                   <MetricCard label="CPA" value={cpp} prev={pCpp} prefix="PKR " color={cpp > 1500 ? T.red : cpp > 1000 ? T.amber : T.green} />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10, marginBottom: 20 }}>
+                <div className="kpi-grid-5" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10, marginBottom: 20 }}>
                   <MetricCard label="AOV" value={aov} prev={pAov} prefix="PKR " />
                   <MetricCard label="CTR" value={ctr} prev={pCtr} color={ctr < 1.5 ? T.red : T.text} />
                   <MetricCard label="CPM" value={cpm} prev={pCpm} prefix="PKR " />
                   <MetricCard label="CPC" value={cpc} prev={pCpc} prefix="PKR " />
                   <MetricCard label="Frequency" value={freq} prev={pFreq} color={freq > 3 ? T.red : freq > 2.5 ? T.amber : T.text} />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+                <div className="funnel-daily-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
                   <FunnelViz data={funnelData} />
                   <DailyChart data={dailyData} />
                 </div>
