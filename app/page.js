@@ -445,9 +445,15 @@ export default function Home() {
       setMonthlyData(monthly); setAdData(ads); setDailyData(daily);
       setFunnelData(funnel); setPlacementData(placements);
       setAgeGenderData(ageGender); setDeviceData(devices);
+      // Auto-load Shopify
+      setShopifyData(null);
     } catch (e) { setError(e.message); }
     setLoading(false);
   }, [token, dateRange, prevRange]);
+
+  useEffect(() => {
+    if (insights && !shopifyLoading) loadShopifyData();
+  }, [insights]);
 
   useEffect(() => {
     if (selectedAcc && connected) loadAccount(selectedAcc);
